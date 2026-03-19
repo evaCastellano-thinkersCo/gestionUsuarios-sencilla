@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestión de Usuarios</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/png" href="./img/usuario.png" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-grid"></div>
+    <main class="app-shell">
+      <section class="content-grid">
+        <section id="formPanel" class="panel glass-panel">
+          <div class="section-header">
+            <div>
+              <h2 id="formTitle">Crear usuario</h2>
+            </div>
+            <button id="resetButton" class="ghost-button" type="button">
+              Limpiar
+            </button>
+          </div>
+
+          <form id="userForm" novalidate>
+            <input type="hidden" id="userId" />
+
+            <label class="field">
+              <span>Nombre</span>
+              <input
+                id="nombre"
+                name="nombre"
+                type="text"
+                maxlength="80"
+                placeholder="Ej. Ana García"
+                required
+              />
+              <small class="error" data-error-for="nombre"></small>
+            </label>
+
+            <label class="field">
+              <span>Email</span>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="ana@email.com"
+                required
+              />
+              <small class="error" data-error-for="email"></small>
+            </label>
+
+            <div class="field-row">
+              <label class="field">
+                <span>Rol</span>
+                <select id="rol" name="rol" required>
+                  <option value="user">user</option>
+                  <option value="admin">admin</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>Estado</span>
+                <select id="estado" name="estado" required>
+                  <option value="activo">activo</option>
+                  <option value="inactivo">inactivo</option>
+                </select>
+              </label>
+            </div>
+
+            <button id="submitButton" class="primary-button" type="submit">
+              Guardar usuario
+            </button>
+          </form>
+        </section>
+
+        <section
+          class="stats-panel glass-panel"
+          aria-label="Resumen de usuarios"
+        >
+          <h2 id="formTitle">Resumen</h2>
+          <div class="stats-stack">
+            <div class="stats-row stats-row-single">
+              <article class="stats-item">
+                <span class="stats-label">Total usuarios</span>
+                <strong id="statsTotal" class="stats-value">0</strong>
+              </article>
+            </div>
+
+            <div class="stats-row">
+              <article class="stats-item">
+                <span class="stats-label">Admin</span>
+                <strong id="statsAdmin" class="stats-value">0</strong>
+              </article>
+              <article class="stats-item">
+                <span class="stats-label">User</span>
+                <strong id="statsUser" class="stats-value">0</strong>
+              </article>
+            </div>
+
+            <div class="stats-row">
+              <article class="stats-item">
+                <span class="stats-label">Activos</span>
+                <strong id="statsActive" class="stats-value">0</strong>
+              </article>
+              <article class="stats-item">
+                <span class="stats-label">Inactivos</span>
+                <strong id="statsInactive" class="stats-value">0</strong>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel glass-panel">
+          <div class="section-header section-header-stack">
+            <div>
+              <h2 id="formTitle">Usuarios</h2>
+            </div>
+            <div class="filters">
+              <label class="search-box">
+                <input
+                  id="searchInput"
+                  type="search"
+                  placeholder="Buscar por nombre o email"
+                />
+              </label>
+
+              <select
+                id="roleFilter"
+                class="filter-select"
+                aria-label="Filtrar por rol"
+              >
+                <option value="">Todos los roles</option>
+                <option value="admin">admin</option>
+                <option value="user">user</option>
+              </select>
+
+              <select
+                id="statusFilter"
+                class="filter-select"
+                aria-label="Filtrar por estado"
+              >
+                <option value="">Todos los estados</option>
+                <option value="activo">activo</option>
+                <option value="inactivo">inactivo</option>
+              </select>
+            </div>
+
+            <div class="list-meta">
+              <p id="resultsSummary" class="results-summary">
+                Mostrando 0–0 de 0 usuarios
+              </p>
+              <label class="page-size-control">
+                <span>Mostrar</span>
+                <select
+                  id="pageSizeSelect"
+                  class="filter-select"
+                  aria-label="Usuarios por página"
+                >
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <div id="loader" class="loader-overlay hidden" aria-live="polite">
+            <div class="loader"></div>
+            <span>Actualizando datos...</span>
+          </div>
+
+          <div class="table-wrapper">
+            <table>
+              <colgroup>
+                <col class="col-name" />
+                <col class="col-email" />
+                <col class="col-role" />
+                <col class="col-status" />
+                <col class="col-actions" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th data-sort-key="nombre" class="sortable-header">
+                    <button type="button" class="sort-button">
+                      <span>Nombre</span>
+                      <span class="sort-indicator"></span>
+                    </button>
+                  </th>
+                  <th data-sort-key="email" class="sortable-header">
+                    <button type="button" class="sort-button">
+                      <span>Email</span>
+                      <span class="sort-indicator"></span>
+                    </button>
+                  </th>
+                  <th data-sort-key="rol" class="sortable-header">
+                    <button type="button" class="sort-button">
+                      <span>Rol</span>
+                      <span class="sort-indicator"></span>
+                    </button>
+                  </th>
+                  <th data-sort-key="estado" class="sortable-header">
+                    <button type="button" class="sort-button">
+                      <span>Estado</span>
+                      <span class="sort-indicator"></span>
+                    </button>
+                  </th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody"></tbody>
+            </table>
+          </div>
+
+          <div id="usersCards" class="cards-grid"></div>
+          <div id="pagination" class="pagination"></div>
+        </section>
+      </section>
+    </main>
+
+    <div id="confirmModal" class="modal-overlay hidden" aria-hidden="true">
+      <div
+        class="confirm-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="confirmTitle"
+      >
+        <button
+          id="closeModalButton"
+          class="modal-close-button"
+          type="button"
+          aria-label="Cerrar"
+        >
+          ×
+        </button>
+        <h3 id="confirmTitle" class="confirm-title">Confirmar eliminación</h3>
+        <p id="confirmMessage" class="confirm-message">
+          ¿Seguro que quieres realizar esta acción?
+        </p>
+        <div class="confirm-actions">
+          <button
+            id="cancelDeleteButton"
+            class="modal-action modal-cancel"
+            type="button"
+          >
+            Cancelar
+          </button>
+          <button
+            id="confirmDeleteButton"
+            class="modal-action modal-delete"
+            type="button"
+          >
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
