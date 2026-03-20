@@ -1,8 +1,10 @@
 const STORAGE_KEY = "gestion-usuarios-app";
+const THEME_STORAGE_KEY = "gestion-usuarios-theme";
 const DEFAULT_PAGE_SIZE = 5;
 const DELETE_ANIMATION_MS = 240;
 
 const elements = {
+  themeToggleButton: document.getElementById("themeToggleButton"),
   formPanel: document.getElementById("formPanel"),
   form: document.getElementById("userForm"),
   userId: document.getElementById("userId"),
@@ -95,6 +97,25 @@ let searchDebounce;
 
 function showLoader(show) {
   elements.loader.classList.toggle("hidden", !show);
+}
+
+function applyTheme(theme) {
+  document.body.dataset.theme = theme;
+  elements.themeToggleButton.setAttribute(
+    "aria-label",
+    theme === "dark" ? "Activar modo claro" : "Activar modo oscuro"
+  );
+}
+
+function toggleTheme() {
+  const nextTheme = document.body.dataset.theme === "dark" ? "light" : "dark";
+  localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+  applyTheme(nextTheme);
+}
+
+function initializeTheme() {
+  const storedTheme = localStorage.getItem(THEME_STORAGE_KEY) || "light";
+  applyTheme(storedTheme);
 }
 
 function showToast(message, type = "info") {
@@ -598,6 +619,7 @@ function initializeApp() {
 }
 
 elements.form.addEventListener("submit", handleSubmit);
+elements.themeToggleButton.addEventListener("click", toggleTheme);
 elements.resetButton.addEventListener("click", resetForm);
 elements.tableBody.addEventListener("click", handleActionClick);
 elements.cards.addEventListener("click", handleActionClick);
@@ -685,4 +707,5 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
+initializeTheme();
 initializeApp();
